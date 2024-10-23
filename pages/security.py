@@ -38,9 +38,10 @@ class User:
             if self.email == user[1]:
                 print("Usuário já existe.")
                 return
-
+        
         with open("assets/Users.txt", "a", encoding="utf-8") as file:
             separator = "" if not users else "||"
             file.write(f"{separator}{self.nome};{self.email};{self.senha};")
             print("Usuário cadastrado com sucesso!")
             return 200
+        

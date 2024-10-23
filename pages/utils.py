@@ -1,5 +1,4 @@
 from flet import SnackBar, Text, colors, padding, Container, alignment, SnackBar, Page, ButtonStyle
-from yt_dlp import YoutubeDL
 import requests
 import os
 
