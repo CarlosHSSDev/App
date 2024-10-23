@@ -1,5 +1,6 @@
 from flet import SnackBar, Text, colors, padding, Container, alignment, SnackBar, Page, ButtonStyle
 from yt_dlp import YoutubeDL
+import requests
 import os
 
 
@@ -49,28 +50,34 @@ def download(e, page: Page, url, format, ext):
     e.control.style = ButtonStyle(bgcolor=colors.PRIMARY_CONTAINER, color=colors.WHITE, padding=padding.symmetric(5))
     e.control.text = "aguarde"
     e.control.update()
-    ydl_opts = {
-        "format": f"{format}",
-        "outtmpl": "download/%(title)s.%(ext)s",
+    data = {
+        "url": f"{url}",  # Substitua pela URL do vídeo que você deseja testar
+        "format": f"{format}",  # Ou outro formato desejado
+        "ext": f"{ext}"       # Ou "mp3" para áudio
     }
 
     try:
-        with YoutubeDL(ydl_opts) as ydl:
-            
-            info_dict = ydl.extract_info(url, download=True)
-            video_title = info_dict.get("title", None)
-            video_ext = info_dict.get("ext", None)
-            video_path = f"./download/{video_title}.{video_ext}"
-            os.rename(video_path, f"./download/{video_title}.{ext}")
-            e.control.style = save
-            e.control.text = "Vídeo" if ext == "mp4" else "Audio"
-            e.control.update()
-            show_snackbar(page, "Download concluído com sucesso!", bgcolor=colors.GREEN)
+        response = requests.post("https://ytdlp-1v9e.onrender.com/download", json=data)
 
-            return 200
+        if response.status_code == 200:
+            content = response.headers["Content-Disposition"]
+            filenameExt = content.split(";")[1].split("=\"")[1][:-1]
+            with open(f"./download/{filenameExt}", 'wb') as f:  # Altere a extensão conforme necessário
+                f.write(response.content)
+            print("Download concluído com sucesso!")
+            show_snackbar(page, "Download concluído com sucesso!", bgcolor=colors.GREEN)
+        else:
+            print(f"Erro: {response.status_code} - {response.json()}")
+    
+        e.control.style = save
+        e.control.text = "Vídeo" if ext == "mp4" else "Audio"
+        e.control.update()
+        
+
+        return 200
         
     except Exception as e:
-        show_snackbar(page, "Download concluído com sucesso!", bgcolor=colors.GREEN)
+        show_snackbar(page, "Ocorreu um erro ao processar o seu download tente novamente!", bgcolor=colors.RED)
         return 500
     
 

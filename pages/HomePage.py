@@ -64,17 +64,7 @@ class VideoSearchApp:
                     text_align=TextAlign.CENTER,
                     color=colors.ON_SURFACE_VARIANT,
                     size=24,
-                ),
-                IconButton(
-                    icon=icons.SEARCH,
-                    icon_size=30,
-                    col=1,
-                    opacity=0.8,
-                    bgcolor=colors.INVERSE_SURFACE,
-                    disabled=True,
-                    icon_color=colors.PRIMARY,
-                    disabled_color=colors.PRIMARY_CONTAINER,
-                ),
+                )
             ],
         )
 
@@ -245,7 +235,7 @@ class VideoSearchApp:
                             max_lines=6,
                         ),
                         Container(alignment=alignment.center, col=1, content=Text("Opções de\nDownload: ", color=colors.PRIMARY, expand=True)),
-                        FilledTonalButton("Vídeo", expand=True, col=1, on_click=lambda e: download(e, self.page, url, format="best", ext="mp4")),
+                        FilledTonalButton("Vídeo", expand=True, col=1, on_click=lambda e: download(e, self.page, url, format="bestaudio+bestvideo/best", ext="mp4")),
                         FilledButton(
                             "Audio",
                             expand=True,
