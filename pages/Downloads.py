@@ -1,7 +1,5 @@
 import flet as ft
 import os
-from moviepy.editor import VideoFileClip
-from PIL import Image
 from pages.utils import get_download_directory, navigation_drawer, _open_drawer
 
 
@@ -37,8 +35,12 @@ class DownloadPage:
     def add_video_to_list(self, file_path):
         # Extrai a thumbnail e o nome do vídeo
         video_name = self.extract_thumbnail(file_path)
-        thumbnail_path = file_path.split(".mp4")[0]
-        thumbnail_path = f"{thumbnail_path}_thumbnail.jpeg"
+        if file_path.endswith(".mp4"):
+            thumbnail_path = file_path.split(".mp4")[0]
+            thumbnail_path = f"{thumbnail_path}_thumbnail.jpeg"
+        else:
+            thumbnail_path = "./assets/Icon_music.img"
+        
         if thumbnail_path and video_name:
             # Cria um objeto de imagem e nome para o vídeo
             video_thumbnail = ft.Image(
@@ -127,7 +129,7 @@ class DownloadPage:
             file_path = os.path.join(directory, file_name)
 
             # Verifica se é um arquivo e se tem a extensão .mp4
-            if os.path.isfile(file_path) and file_path.endswith(".mp4"):
+            if os.path.isfile(file_path) and (file_path.endswith(".mp4") or file_path.endswith(".mp3")):
                 # Adiciona o vídeo à lista
                 self.add_video_to_list(file_path)
 

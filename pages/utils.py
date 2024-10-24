@@ -92,6 +92,7 @@ def download(e, page: Page, url, format, ext):
     }
 
     try:
+        
         # Requisição para o servidor de download
         response = requests.post("https://ytdlp-1v9e.onrender.com/download", json=data)
 
@@ -108,22 +109,22 @@ def download(e, page: Page, url, format, ext):
                 os.makedirs(app_download_dir)
 
             file_path = os.path.join(app_download_dir, filenameExt)
-
+            
             # Escrever o arquivo no diretório de download
             with open(file_path, "wb") as f:
                 f.write(response.content)
-
+            
             if ext == "mp4":
                 #pegar e salvar a thumbnail
                 response = requests.post("https://ytdlp-1v9e.onrender.com/thumbnail", json={"url": f"{url}"})
+                print(response.headers)
                 with open(f"{file_path.split(".mp4")[0]}_thumbnail.jpeg", "wb") as file:
                     file.write(response.content)
 
-
-            print("Download concluído com sucesso!")
             show_snackbar(
                 page, "Download concluído com sucesso!", bgcolor=colors.GREEN
             )
+            
         else:
             show_snackbar(
                 page,
