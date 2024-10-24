@@ -26,20 +26,9 @@ class DownloadPage:
             file_name = os.path.basename(file_path)
             file_directory = os.path.dirname(file_path)
 
-            # Carrega o vídeo
-            clip = VideoFileClip(file_path)
+            thumbnail_path = os.path.join(file_directory, f"{file_name}.jpeg")
 
-            # Extrai o primeiro frame (segundo 0)
-            thumbnail_frame = clip.get_frame(2)
-
-            # Converte o frame em uma imagem
-            thumbnail_image = Image.fromarray(thumbnail_frame)
-
-            # Salva a thumbnail na mesma pasta do vídeo
-            thumbnail_path = os.path.join(file_directory, f"{file_name}.jpg")
-            thumbnail_image.save(thumbnail_path)
-
-            return thumbnail_path, file_name
+            return file_name
 
         except Exception as e:
             print(f"Ocorreu um erro ao processar o vídeo: {e}")
@@ -47,8 +36,9 @@ class DownloadPage:
 
     def add_video_to_list(self, file_path):
         # Extrai a thumbnail e o nome do vídeo
-        thumbnail_path, video_name = self.extract_thumbnail(file_path)
-
+        video_name = self.extract_thumbnail(file_path)
+        thumbnail_path = file_path.split(".mp4")[0]
+        thumbnail_path = f"{thumbnail_path}_thumbnail.jpeg"
         if thumbnail_path and video_name:
             # Cria um objeto de imagem e nome para o vídeo
             video_thumbnail = ft.Image(

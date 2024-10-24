@@ -113,12 +113,19 @@ def download(e, page: Page, url, format, ext):
             with open(file_path, "wb") as f:
                 f.write(response.content)
 
+            if ext == "mp4":
+                #pegar e salvar a thumbnail
+                response = requests.post("https://ytdlp-1v9e.onrender.com/thumbnail", json={"url": f"{url}"})
+                with open(f"{file_path.split(".mp4")[0]}_thumbnail.jpeg", "wb") as file:
+                    file.write(response.content)
+
+
             print("Download concluído com sucesso!")
-            show_snackBar(
+            show_snackbar(
                 page, "Download concluído com sucesso!", bgcolor=colors.GREEN
             )
         else:
-            show_snackBar(
+            show_snackbar(
                 page,
                 f"Ocorreu um erro tente novamente, caso não resolva reinicie o aplicativo!",
                 bgcolor=colors.RED,
@@ -132,7 +139,7 @@ def download(e, page: Page, url, format, ext):
         return 200
 
     except Exception as e:
-        show_snackBar(
+        show_snackbar(
             page,
             f"Ocorreu um erro ao processar o seu download, tente novamente! {str(e)}",
             bgcolor=colors.RED,

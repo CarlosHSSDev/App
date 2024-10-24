@@ -23,6 +23,6 @@ def main(page: Page):
     page.bgcolor = colors.PRIMARY
     page.update()
 
-
+ 
 if __name__ == "__main__":
     app(target=main, assets_dir="assets")
