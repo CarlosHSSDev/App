@@ -38,7 +38,7 @@ from flet import (
 import json
 import requests
 from pages.utils import (
-    navigate_to, download
+    navigate_to, download, navigation_drawer, _open_drawer
 )  
 
 
@@ -89,7 +89,7 @@ class VideoSearchApp:
                 expand=True,
                 controls=[
                     IconButton(
-                        col=1, icon=icons.MENU, icon_color=colors.INVERSE_SURFACE
+                        col=1, icon=icons.MENU, icon_color=colors.INVERSE_SURFACE, on_click=lambda e:  _open_drawer(e, navigation_drawer(self.page, 0))
                     ),
                     Container(
                         height=40,
@@ -235,7 +235,7 @@ class VideoSearchApp:
                             max_lines=6,
                         ),
                         Container(alignment=alignment.center, col=1, content=Text("Opções de\nDownload: ", color=colors.PRIMARY, expand=True)),
-                        FilledTonalButton("Vídeo", expand=True, col=1, on_click=lambda e: download(e, self.page, url, format="bestaudio+bestvideo/best", ext="mp4")),
+                        FilledTonalButton("Vídeo", expand=True, col=1, on_click=lambda e: download(e, self.page, url, format="best", ext="mp4")),
                         FilledButton(
                             "Audio",
                             expand=True,
