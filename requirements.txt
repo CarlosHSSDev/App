@@ -1,2 +1,2 @@
-requests==2.32.3
+requests
 flet==0.24.1

@@ -118,7 +118,7 @@ def download(e, page: Page, url, format, ext):
                 #pegar e salvar a thumbnail
                 response = requests.post("https://ytdlp-1v9e.onrender.com/thumbnail", json={"url": f"{url}"})
                 print(response.headers)
-                with open(f"{file_path.split(".mp4")[0]}_thumbnail.jpeg", "wb") as file:
+                with open(f"{file_path.split('.mp4')[0]}_thumbnail.jpeg", "wb") as file:
                     file.write(response.content)
 
             show_snackbar(
