@@ -1,7 +1,7 @@
 import flet as ft
 import os
-from pages.utils import get_download_directory, navigation_drawer, _open_drawer
-
+from pages.utils import get_download_directory, navigation_drawer, _open_drawer, show_snackbar
+from pages.Styles import Styles
 
 class DownloadPage:
     def __init__(self, page: ft.Page):
@@ -11,6 +11,9 @@ class DownloadPage:
         self.video_list_view = ft.ListView(
             expand=True, col=5, padding=ft.padding.only(top=40), spacing=10
         )  # Lista rolável de vídeos
+        self.dark_mode = self.page.theme_mode.name == "DARK"
+        self.styles = Styles(page)
+        page.bgcolor = self.styles.color_background_dark if self.dark_mode else self.styles.color_background_light
         self.screen()
 
     def extract_thumbnail(self, file_path):
@@ -23,8 +26,6 @@ class DownloadPage:
             # Extrai o nome do arquivo e o diretório
             file_name = os.path.basename(file_path)
             file_directory = os.path.dirname(file_path)
-
-            thumbnail_path = os.path.join(file_directory, f"{file_name}.jpeg")
 
             return file_name
 
@@ -71,8 +72,8 @@ class DownloadPage:
                                     ft.IconButton(
                                         icon=ft.icons.PLAY_ARROW,
                                         icon_color=ft.colors.GREEN,
-                                        on_click=lambda e: self.download_video(
-                                            video_name
+                                        on_click=lambda e: self.play_video(
+                                            file_path
                                         ),
                                     ),
                                     ft.IconButton(
@@ -106,6 +107,7 @@ class DownloadPage:
                     ft.Container(
                         height=40,
                         col=5,
+                        padding=ft.padding.only(top=7),
                         content=ft.Text(
                             "Arquivos baixados",
                             max_lines=1,
@@ -133,18 +135,20 @@ class DownloadPage:
                 # Adiciona o vídeo à lista
                 self.add_video_to_list(file_path)
 
-    def download_video(self, video_name):
-        print(f"Baixando o vídeo: {video_name}")
-        # Aqui vai o código para baixar o vídeo
+    def play_video(self, file_path):
+        alert = ft.AlertDialog(content=ft.Video([ft.VideoMedia(file_path)], autoplay=True, show_controls=True, filter_quality=ft.FilterQuality.MEDIUM, playlist_mode=ft.PlaylistMode.LOOP), bgcolor=ft.colors.WHITE)
+        self.page.open(alert)
+        return
+        
 
-    def delete_video(self, video_name):
-        print(f"Excluindo o vídeo: {video_name}")
-        # Aqui vai o código para excluir o vídeo
+    def delete_video(self, file_path):
+        show_snackbar(self.page, "Essa funcionalidade ainda está sendo criada!", bgcolor=ft.colors.BLUE)
+        return
 
 
 def main(page: ft.Page):
     DownloadPage(page)
-    page.padding = ft.padding.only(top=40)
+    page.padding = ft.padding.only(top=40, bottom=40)
     page.theme = ft.Theme(
         color_scheme=ft.ColorScheme(
             primary="#112053",

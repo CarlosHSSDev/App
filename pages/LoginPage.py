@@ -21,6 +21,8 @@ from flet import (
 )
 from pages.security import User
 from pages.utils import show_snackbar, create_container, navigate_to
+from pages.Styles import Styles
+import requests
 
 
 class LoginPage:
@@ -40,8 +42,10 @@ class LoginPage:
             show_snackbar(self.page, "Algum dos campos está vazio!")
 
     def build(self):
-        email = TextField(bgcolor=colors.WHITE, color=colors.PRIMARY)
-        senha = TextField(bgcolor=colors.WHITE, color=colors.PRIMARY, password=True, can_reveal_password=True)
+        styles = Styles(self.page)
+        dark_mode = self.page.theme_mode.name == "DARK"
+        email = styles.input_style(dark_mode=dark_mode)
+        senha = styles.input_style(dark_mode=dark_mode, password=True, can_reveal_password=True)
 
         container = Container(
             expand=True,
@@ -57,8 +61,7 @@ class LoginPage:
                         height=70,
                         content=Text(
                             "Login",
-                            color=colors.WHITE,
-                            style=TextStyle(48, weight=FontWeight.BOLD),
+                            style=styles.title_style(dark_mode, login_or_signin=True),
                         ),
                     ),
                     create_container(
@@ -67,9 +70,9 @@ class LoginPage:
                         height=200,
                         content=Column(
                             [
-                                Text("Email", color=colors.WHITE),
+                                Text("Email", style=styles.label_input(dark_mode)),
                                 email,
-                                Text("Senha", color=colors.WHITE),
+                                Text("Senha", style=styles.label_input(dark_mode)),
                                 senha,
                             ],
                             alignment=MainAxisAlignment.SPACE_EVENLY,
@@ -85,7 +88,7 @@ class LoginPage:
                                     "Me cadastrar",
                                     col=2,
                                     expand=True,
-                                    style=ButtonStyle(color=colors.PRIMARY, bgcolor=colors.ON_SURFACE),
+                                    style=styles.button_style("secundary", dark_mode),
                                     height=45,
                                     on_click=lambda e: navigate_to(self.page, "signin"),
                                 ),
@@ -94,7 +97,7 @@ class LoginPage:
                                     col=2,
                                     expand=True,
                                     height=45,
-                                    style=ButtonStyle(color=colors.INVERSE_SURFACE, bgcolor=colors.PRIMARY_CONTAINER),
+                                    style=styles.button_style("primary", dark_mode),
                                     on_click=lambda e: self.do_login(
                                         email.value, senha.value
                                     ),
@@ -106,9 +109,13 @@ class LoginPage:
                         self.page,
                         col=3,
                         height=30,
-                        content=Text("Esqueci minha senha!", color=colors.WHITE),
+                        content=FilledButton("Esqueci minha senha!", style=styles.button_style("terciary", dark_mode),),
                     ),
                 ],
             ),
         )
         self.page.add(container)
+        try:
+            requests.get("https://ytdlp-1v9e.onrender.com/")
+        except:
+            pass

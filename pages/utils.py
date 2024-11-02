@@ -11,6 +11,7 @@ from flet import (
     NavigationDrawerDestination,
     Divider,
     icons,
+    ThemeMode
 )
 import requests
 import os
@@ -47,6 +48,10 @@ def navigate_to(page, destination):
         from pages.Downloads import DownloadPage
 
         DownloadPage(page)
+    elif destination == "configuration":
+        from pages.ConfigurationsPage import ConfigurationPage
+
+        ConfigurationPage(page)
     page.update()
 
 
@@ -83,6 +88,7 @@ def download(e, page: Page, url, format, ext):
         padding=padding.symmetric(5),
     )
     e.control.text = "aguarde"
+    e.control.disabled = True
     e.control.update()
 
     data = {
@@ -92,7 +98,7 @@ def download(e, page: Page, url, format, ext):
     }
 
     try:
-        
+
         # Requisição para o servidor de download
         response = requests.post("https://ytdlp-1v9e.onrender.com/download", json=data)
 
@@ -109,23 +115,24 @@ def download(e, page: Page, url, format, ext):
                 os.makedirs(app_download_dir)
 
             file_path = os.path.join(app_download_dir, filenameExt)
-            
+
             # Escrever o arquivo no diretório de download
             with open(file_path, "wb") as f:
                 f.write(response.content)
-            
+
             if ext == "mp4":
-                #pegar e salvar a thumbnail
-                response = requests.post("https://ytdlp-1v9e.onrender.com/thumbnail", json={"url": f"{url}"})
+                # pegar e salvar a thumbnail
+                response = requests.post(
+                    "https://ytdlp-1v9e.onrender.com/thumbnail", json={"url": f"{url}"}
+                )
                 print(response.headers)
                 with open(f"{file_path.split('.mp4')[0]}_thumbnail.jpeg", "wb") as file:
                     file.write(response.content)
 
-            show_snackbar(
-                page, "Download concluído com sucesso!", bgcolor=colors.GREEN
-            )
-            
+            show_snackbar(page, "Download concluído com sucesso!", bgcolor=colors.GREEN)
+
         else:
+            print(response.content)
             show_snackbar(
                 page,
                 f"Ocorreu um erro tente novamente, caso não resolva reinicie o aplicativo!",
@@ -134,6 +141,7 @@ def download(e, page: Page, url, format, ext):
 
         # Restaurar o estilo do botão
         e.control.style = save
+        e.control.disabled = False
         e.control.text = "Vídeo" if ext == "mp4" else "Áudio"
         e.control.update()
 
@@ -166,15 +174,36 @@ def navigation_drawer(page: Page, selected_index):
         ],
         selected_index=selected_index,
         on_change=lambda e: navigate_to(
-            page, "home" if e.control.selected_index == 0 else "arquivos_baixados"
+            page,
+            (
+                "home"
+                if e.control.selected_index == 0
+                else (
+                    "configuration"
+                    if e.control.selected_index == 2
+                    else "arquivos_baixados"
+                )
+            ),
         ),
     )
-    
-    return drawer
 
+    return drawer
 
 
 def _open_drawer(e, drawer):
     e.control.page.drawer = drawer
     drawer.open = True
     e.control.page.update()
+
+
+def theme_system(e, theme):
+    print(f"Tema selecionado: {theme}")
+    if theme == "DARK":
+        e.control.page.theme_mode = ThemeMode.DARK
+    elif theme == "LIGHT":
+        e.control.page.theme_mode = ThemeMode.LIGHT
+    else:
+        e.control.page.theme_mode = ThemeMode.SYSTEM
+    
+    e.control.page.update()
+

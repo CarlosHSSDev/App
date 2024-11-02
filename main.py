@@ -2,26 +2,19 @@ from flet import (
     Page,
     padding,
     app,
-    Theme,
-    ThemeMode,
-    ColorScheme,
-    colors
+    ThemeMode
 )
 from pages.LoginPage import LoginPage
+from pages.Styles import Styles
 
 def main(page: Page):
-    page.bgcolor = "#112053"
-    LoginPage(page).build()
+    styles = Styles(page)
+    page.theme_mode = ThemeMode.SYSTEM
+    dark_mode = page.theme_mode.name == "DARK"
+    page.bgcolor = styles.color_background_dark if dark_mode else styles.color_background_light
     page.padding = padding.only(top=40)
-    page.theme = Theme(
-        color_scheme=ColorScheme(
-            primary="#112053",
-        )
-    )
-
-    page.theme_mode = ThemeMode.DARK
-    page.bgcolor = colors.PRIMARY
-    page.update()
+    
+    LoginPage(page).build()
 
  
 if __name__ == "__main__":
